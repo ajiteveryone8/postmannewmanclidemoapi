@@ -1,0 +1,202 @@
+{
+	"info": {
+		"_postman_id": "3db9d751-a8a7-4a86-9508-1d149de23e25",
+		"name": "ApiDemo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "16375204"
+	},
+	"item": [
+		{
+			"name": "Public",
+			"item": [
+				{
+					"name": "Jokes",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Data object is present in the response\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData.data).to.exist;",
+									"});",
+									"",
+									"",
+									"pm.test(\"Categories array should be empty\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData.data.categories).to.be.an('array').that.is.empty;",
+									"});",
+									"",
+									"",
+									"pm.test(\"Id is a number\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData.id).to.be.a('number');",
+									"});",
+									"",
+									"",
+									"pm.test(\"Content is a non-empty string\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData.data.content).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Content should not be empty\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{freeapi}}/public/randomjokes/joke/random",
+							"host": [
+								"{{freeapi}}"
+							],
+							"path": [
+								"public",
+								"randomjokes",
+								"joke",
+								"random"
+							]
+						},
+						"description": "This endpoint makes an HTTP GET request to retrieve a random joke from the public collection. The response will be in JSON format and will include the statusCode, data, message, and success fields.\n\n### Request Body\n\nThis request does not require a request body.\n\n### Response Body\n\n- `statusCode` (number): The status code of the response.\n    \n- `data` (object): An object containing the joke details, including categories, id, and content.\n    \n    - `categories` (array): An array of categories associated with the joke.\n        \n    - `id` (number): The unique identifier of the joke.\n        \n    - `content` (string): The content of the joke.\n        \n- `message` (string): Any additional message related to the response.\n    \n- `success` (boolean): Indicates whether the request was successful."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register User",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"function getRandomRoles()\r",
+									"{\r",
+									"    const roles = [\"ADMIN\", \"USER\"]\r",
+									"\r",
+									"    return roles[Math.floor(Math.random() * roles.length)]\r",
+									"}\r",
+									"\r",
+									"function getRandomUserName()\r",
+									"{\r",
+									"    const letters = \"abzcmrtyui562ljfas65asdfoudfjlads65\"\r",
+									"    let username = \"\"\r",
+									"\r",
+									"    for(let i=0 ; i<8 ; i++)\r",
+									"    {\r",
+									"        username += letters[Math.floor(Math.random() * letters.length)]\r",
+									"    }\r",
+									"\r",
+									"    return username\r",
+									"}\r",
+									"\r",
+									"pm.environment.set(\"randomRole\", getRandomRoles())\r",
+									"pm.environment.set(\"randomUsername\", getRandomUserName())\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"pm.test(\"Response status code is 201\", function () {",
+									"  pm.expect(pm.response.code).to.equal(201);",
+									"});",
+									"",
+									"",
+									"pm.test(\"Content-Type header is application/json\", function () {",
+									"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+									"});",
+									"",
+									"",
+									"pm.test(\"Validate the user object\", function () {",
+									"  const responseData = pm.response.json();",
+									"  ",
+									"  pm.expect(responseData.data.user).to.be.an('object');",
+									"  pm.expect(responseData.data.user._id).to.be.a('string');",
+									"  pm.expect(responseData.data.user.avatar).to.be.an('object');",
+									"  pm.expect(responseData.data.user.avatar.url).to.be.a('string');",
+									"  pm.expect(responseData.data.user.avatar.localPath).to.be.a('string');",
+									"  pm.expect(responseData.data.user.avatar._id).to.be.a('string');",
+									"  pm.expect(responseData.data.user.username).to.be.a('string');",
+									"  pm.expect(responseData.data.user.email).to.be.a('string');",
+									"  pm.expect(responseData.data.user.role).to.be.a('string');",
+									"  pm.expect(responseData.data.user.loginType).to.be.a('string');",
+									"  pm.expect(responseData.data.user.isEmailVerified).to.be.a('boolean');",
+									"  pm.expect(responseData.data.user.createdAt).to.be.a('string');",
+									"  pm.expect(responseData.data.user.updatedAt).to.be.a('string');",
+									"  pm.expect(responseData.data.user.__v).to.be.a('number');",
+									"});",
+									"",
+									"",
+									"pm.test(\"Email is in a valid format\", function () {",
+									"  const responseData = pm.response.json();",
+									"  ",
+									"  pm.expect(responseData.data.user.email).to.be.a('string').and.to.match(/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/, \"Email should be in a valid format\");",
+									"});",
+									"",
+									"",
+									"pm.test(\"Avatar object is present and contains expected fields\", function () {",
+									"    const responseData = pm.response.json();",
+									"    ",
+									"    pm.expect(responseData).to.be.an('object');",
+									"    pm.expect(responseData.data.user.avatar).to.exist;",
+									"    pm.expect(responseData.data.user.avatar).to.have.property('url');",
+									"    pm.expect(responseData.data.user.avatar).to.have.property('localPath');",
+									"    pm.expect(responseData.data.user.avatar).to.have.property('_id');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"{{$randomEmail}}\",\r\n  \"password\": \"test@123\",\r\n  \"role\": \"{{randomRole}}\",\r\n  \"username\": \"{{randomUsername}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{freeapi}}/users/register",
+							"host": [
+								"{{freeapi}}"
+							],
+							"path": [
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
